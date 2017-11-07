@@ -1,28 +1,31 @@
-.App {
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+}
+
+h2 {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.container {
   text-align: center;
+  margin: auto;
+  width: 800px;
+  height: 700px;
+  border: 1px solid steelblue;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.graph-container {
+  border: 1px #e1e4e8 solid;
+  width: 725px;
+  height: 138px;
+  padding: 8px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
+.calendar {
+  /*border: 1px solid aliceblue;*/
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 10;
+  /*font-family: Helvetica;*/
 
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
