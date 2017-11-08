@@ -15,7 +15,7 @@ class App extends Component {
   render() {
     return (
       <div className="container">
-        <h2>contributions in the last year</h2>
+        <h2 className="graph-header">contributions in the last year</h2>
         <div className="graph-container">
           <svg
               width="676"
@@ -177,18 +177,23 @@ class App extends Component {
 
 
 
-        <div className="graph-footer">
-          Less
-          <ul className="legend">
-            <li style={{backgroundColor: '#eee'}}></li>
-            <li style={{backgroundColor: '#c6e48b'}}></li>
-            <li style={{backgroundColor: '#7bc96f'}}></li>
-            <li style={{backgroundColor: '#239a3b'}}></li>
-            <li style={{backgroundColor: '#196127'}}></li>
-          </ul>
-          More
-        </div>
+          <div className="graph-footer">
 
+            <div className="legend-container">
+              Less
+              <ul className="legend">
+                <li style={{backgroundColor: '#eee'}}></li>
+                <li style={{backgroundColor: '#c6e48b'}}></li>
+                <li style={{backgroundColor: '#7bc96f'}}></li>
+                <li style={{backgroundColor: '#239a3b'}}></li>
+                <li style={{backgroundColor: '#196127'}}></li>
+              </ul>
+              More
+            </div>
+
+
+
+          </div>
 
 
 
