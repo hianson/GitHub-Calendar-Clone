@@ -7,26 +7,68 @@ class App extends Component {
   constructor(props) {
   super(props);
   this.state = {
+    user: {
+      authToken: null
+    },
     days: {
 
     }
     };
+    // this.handleClick = this.handleClick.bind(this);
   }
 
-handleClick() {
-  console.log('thanks for clicking me')
-  axios.get('/user?ID=12345')
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+login() {
+  var self = this;
+  // authenticate via backend and receive JWT token
+  // make GET request for PSessions using token
+  axios.post('http://localhost:3001/authenticate', {
+    email: 'anson@anson',
+    password: 'password'
+  })
+  .then(function (response) {
+    var user = {}
+
+    user['authToken'] = response.data.auth_token;
+    self.setState({user}, ()=>console.log('logged in:', self.state.user.authToken))
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+logout() {
+  var user = {}
+  user['authToken'] = null
+  this.setState({user}, ()=>console.log('logged out:', this.state.user.authToken))
+}
+
+renderSessionButtons() {
+  if (this.state.user.authToken) {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={(e) => this.logout()}>
+        Logout
+      </button>
+    </div>)
+  } else {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={(e) => this.login()}>
+        Login
+      </button>
+    </div>)
+  }
 }
 
   render() {
     return (
       <div className="container">
+
+
+      { this.renderSessionButtons() }
+
+
+
         <h2 className="graph-header">contributions in the last year</h2>
         <div className="graph-container">
           <svg
@@ -184,11 +226,7 @@ handleClick() {
         </div>
 
 
-        <div className="boton-container">
-          <button className="boton" onClick={(e) => this.handleClick(e)}>
-            Button
-          </button>
-        </div>
+
 
       </div>
     );
