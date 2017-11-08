@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './App.css';
+import './css/App.css';
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
@@ -10,6 +11,17 @@ class App extends Component {
     }
     };
   }
+
+handleClick() {
+  console.log('thanks for clicking me')
+  axios.get('/user?ID=12345')
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
 
   render() {
     return (
@@ -190,23 +202,14 @@ class App extends Component {
 
           </div>
 
-
-
-
         </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
+        <div className="boton-container">
+          <button className="boton" onClick={(e) => this.handleClick(e)}>
+            Button
+          </button>
+        </div>
 
       </div>
     );
