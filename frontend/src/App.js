@@ -9,13 +9,28 @@ class App extends Component {
   this.state = {
     user: {
       authToken: null
-    },
-    days: {
-
-    }
+      },
+    practiceSessions: []
     };
-    // this.handleClick = this.handleClick.bind(this);
   }
+
+renderSessionButtons() {
+  if (this.state.user.authToken) {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={() => this.logout()}>
+        Logout
+      </button>
+    </div>)
+  } else {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={() => this.login()}>
+        Login
+      </button>
+    </div>)
+  }
+}
 
 login() {
   var self = this;
@@ -25,13 +40,13 @@ login() {
     email: 'anson@anson',
     password: 'password'
   })
-  .then(function (response) {
+  .then(function(response) {
     var user = {}
 
     user['authToken'] = response.data.auth_token;
-    self.setState({user}, ()=>console.log('logged in:', self.state.user.authToken))
+    self.setState({user}, ()=>self.getPracticeSessions())
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 }
@@ -42,22 +57,20 @@ logout() {
   this.setState({user}, ()=>console.log('logged out:', this.state.user.authToken))
 }
 
-renderSessionButtons() {
-  if (this.state.user.authToken) {
-    return(
-    <div className="boton-container">
-      <button className="boton" onClick={(e) => this.logout()}>
-        Logout
-      </button>
-    </div>)
-  } else {
-    return(
-    <div className="boton-container">
-      <button className="boton" onClick={(e) => this.login()}>
-        Login
-      </button>
-    </div>)
-  }
+getPracticeSessions() {
+  var self = this;
+  console.log('getting practice session data...')
+
+  axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
+  axios.get('http://localhost:3001/practice_sessions/')
+  .then(function(response) {
+    var updateState = {}
+    console.log(response.data[0]);
+    self.setState({ practiceSessions: response.data }, ()=>console.log(self.state))
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
 }
 
   render() {
