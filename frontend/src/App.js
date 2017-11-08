@@ -19,14 +19,13 @@ class App extends Component {
           <svg
               width="676"
               height="104"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
           >
             <defs>
                 <g id="day">
                     <rect width="10" height="10" fill="#ebedf0" />
                 </g>
             </defs>
+
             <g transform="translate(16, 20)">
               <g transform="translate(0, 0)">
                 <use x="13" y="0" xlinkHref="#day" />

@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171107030450) do
+ActiveRecord::Schema.define(version: 20171108025041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "practice_sessions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.text "description"
+    t.text "tags", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_practice_sessions_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email"
@@ -22,4 +33,5 @@ ActiveRecord::Schema.define(version: 20171107030450) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "practice_sessions", "users"
 end
