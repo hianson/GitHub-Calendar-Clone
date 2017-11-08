@@ -1,28 +1,59 @@
-.App {
+body {
+  /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"*/
+}
+
+.graph-header {
+  margin-left: 36.5px;
+  font-weight: 400;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.container {
+  margin: auto;
+  width: 800px;
+  height: 700px;
+  border: 1px solid steelblue;
+}
+
+.graph-container {
   text-align: center;
+  margin: inherit;
+  border: 1px #d1d5da solid;
+  border-radius: 3px;
+  width: 725px;
+  height: 138px;
+  padding: 8px 0;
+  font-size: 9px;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.graph-footer {
+  margin: inherit;
+  /*border: 1px orange solid;*/
+  font-size: 11px;
+  color: #586069;
+  width: 661px;
+  height: 16px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.legend-container {
+  float: right;
 }
 
-.App-title {
-  font-size: 1.5em;
+.legend {
+  display: inline-block;
+  /*position: relative;*/
+  list-style-type: none;
+  margin: 0 5px;
+  /*border: 1px blue solid;*/
+  padding-left: 0;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.legend li {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  /*margin-right: 3px;*/
+  /*margin: 0 2px 0 2px;*/
+  /*margin-right: 3px;*/
 }
