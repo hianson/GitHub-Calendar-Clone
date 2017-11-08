@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import GraphLegend from './components/GraphLegend.js';
 import './css/App.css';
 import axios from 'axios';
 
@@ -179,29 +180,7 @@ handleClick() {
 
             </g>
           </svg>
-
-
-
-
-
-          <div className="graph-footer">
-
-            <div className="legend-container">
-              Less
-              <ul className="legend">
-                <li style={{backgroundColor: '#eee'}}></li>
-                <li style={{backgroundColor: '#c6e48b'}}></li>
-                <li style={{backgroundColor: '#7bc96f'}}></li>
-                <li style={{backgroundColor: '#239a3b'}}></li>
-                <li style={{backgroundColor: '#196127'}}></li>
-              </ul>
-              More
-            </div>
-
-
-
-          </div>
-
+          <GraphLegend />
         </div>
 
 

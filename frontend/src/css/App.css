@@ -26,42 +26,6 @@ body {
   padding: 8px 0;
 }
 
-.graph-footer {
-  margin: inherit;
-  /*border: 1px orange solid;*/
-  font-size: 11px;
-  color: #586069;
-  width: 661px;
-  height: 16px;
-}
-
-.legend-container {
-  float: right;
-}
-
-.legend {
-  display: inline-block;
-  /*position: relative;*/
-  list-style-type: none;
-  margin: 0 5px;
-  /*border: 1px blue solid;*/
-  padding-left: 0;
-}
-
-.legend li {
-  width: 10px;
-  height: 10px;
-  display: inline-block;
-  /*margin-right: 3px;*/
-  /*margin: 0 2px 0 2px;*/
-  /*margin-right: 3px;*/
-}
-
-.graph-text {
-  fill: #767676;
-  font-size: 9px;
-}
-
 
 .boton-container {
   text-align: center;
