@@ -24,7 +24,6 @@ body {
   width: 725px;
   height: 138px;
   padding: 8px 0;
-  font-size: 9px;
 }
 
 .graph-footer {
@@ -56,4 +55,9 @@ body {
   /*margin-right: 3px;*/
   /*margin: 0 2px 0 2px;*/
   /*margin-right: 3px;*/
+}
+
+.graph-text {
+  fill: #767676;
+  font-size: 9px;
 }
