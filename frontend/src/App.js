@@ -162,8 +162,13 @@ class App extends Component {
 
 
 
-
+              <text text-anchor="start" class="wday" dx="-14" dy="8" style={{ display:"none" }}>Sun</text>
+              <text text-anchor="start" class="wday" dx="-14" dy="20">Mon</text>
+              <text text-anchor="start" class="wday" dx="-14" dy="32" style={{ display:"none" }}>Tue</text>
               <text text-anchor="start" class="wday" dx="-14" dy="44">Wed</text>
+              <text text-anchor="start" class="wday" dx="-14" dy="57" style={{ display:"none" }}>Thu</text>
+              <text text-anchor="start" class="wday" dx="-14" dy="69">Fri</text>
+              <text text-anchor="start" class="wday" dx="-14" dy="81" style={{ display:"none" }}>Sat</text>
 
             </g>
           </svg>
