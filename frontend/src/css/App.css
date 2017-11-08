@@ -24,36 +24,14 @@ body {
   width: 725px;
   height: 138px;
   padding: 8px 0;
-  font-size: 9px;
 }
 
-.graph-footer {
-  margin: inherit;
-  /*border: 1px orange solid;*/
-  font-size: 11px;
-  color: #586069;
-  width: 661px;
-  height: 16px;
+
+.boton-container {
+  text-align: center;
+  margin: 30px;
 }
 
-.legend-container {
-  float: right;
-}
+.boton {
 
-.legend {
-  display: inline-block;
-  /*position: relative;*/
-  list-style-type: none;
-  margin: 0 5px;
-  /*border: 1px blue solid;*/
-  padding-left: 0;
-}
-
-.legend li {
-  width: 10px;
-  height: 10px;
-  display: inline-block;
-  /*margin-right: 3px;*/
-  /*margin: 0 2px 0 2px;*/
-  /*margin-right: 3px;*/
 }

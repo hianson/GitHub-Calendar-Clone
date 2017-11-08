@@ -1,33 +1,99 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import GraphLegend from './components/GraphLegend.js';
+import './css/App.css';
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
   super(props);
   this.state = {
-    days: {
-
-    }
+    user: {
+      authToken: null
+      },
+    practiceSessions: []
     };
   }
+
+renderSessionButtons() {
+  if (this.state.user.authToken) {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={() => this.logout()}>
+        Logout
+      </button>
+    </div>)
+  } else {
+    return(
+    <div className="boton-container">
+      <button className="boton" onClick={() => this.login()}>
+        Login
+      </button>
+    </div>)
+  }
+}
+
+login() {
+  var self = this;
+  // authenticate via backend and receive JWT token
+  // make GET request for PSessions using token
+  axios.post('http://localhost:3001/authenticate', {
+    email: 'anson@anson',
+    password: 'password'
+  })
+  .then(function(response) {
+    var user = {}
+
+    user['authToken'] = response.data.auth_token;
+    self.setState({user}, ()=>self.getPracticeSessions())
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+}
+
+logout() {
+  var user = {}
+  user['authToken'] = null
+  this.setState({user}, ()=>console.log('logged out:', this.state.user.authToken))
+}
+
+getPracticeSessions() {
+  var self = this;
+  console.log('getting practice session data...')
+
+  axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
+  axios.get('http://localhost:3001/practice_sessions/')
+  .then(function(response) {
+    var updateState = {}
+    console.log(response.data[0]);
+    self.setState({ practiceSessions: response.data }, ()=>console.log(self.state))
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+}
 
   render() {
     return (
       <div className="container">
+
+
+      { this.renderSessionButtons() }
+
+
+
         <h2 className="graph-header">contributions in the last year</h2>
         <div className="graph-container">
           <svg
               width="676"
               height="104"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
           >
             <defs>
                 <g id="day">
-                    <rect class="day" width="10" height="10" fill="#ebedf0" />
+                    <rect width="10" height="10" fill="#ebedf0" />
                 </g>
             </defs>
+
             <g transform="translate(16, 20)">
               <g transform="translate(0, 0)">
                 <use x="13" y="0" xlinkHref="#day" />
@@ -141,74 +207,36 @@ class App extends Component {
               <g transform="translate(663, 0)">
               </g>
               <g transform="translate(676, 0)">
-                  <rect class="day" width="10" height="10" x="-39" y="0" fill="#c6e48b" data-count="1" data-date="2017-11-05"/>
-                  <rect class="day" width="10" height="10" x="-39" y="12" fill="#196127" data-count="12" data-date="2017-11-06"/>
+                  <rect width="10" height="10" x="-39" y="0" fill="#c6e48b" data-count="1" data-date="2017-11-05"/>
+                  <rect width="10" height="10" x="-39" y="12" fill="#196127" data-count="12" data-date="2017-11-06"/>
               </g>
 
-              <text x="13" y="-10" class="month">Nov</text>
-              <text x="61" y="-10" class="month">Dec</text>
-              <text x="109" y="-10" class="month">Jan</text>
-              <text x="169" y="-10" class="month">Feb</text>
-              <text x="217" y="-10" class="month">Mar</text>
-              <text x="265" y="-10" class="month">Apr</text>
-              <text x="325" y="-10" class="month">May</text>
-              <text x="373" y="-10" class="month">Jun</text>
-              <text x="421" y="-10" class="month">Jul</text>
-              <text x="481" y="-10" class="month">Aug</text>
-              <text x="529" y="-10" class="month">Sep</text>
-              <text x="577" y="-10" class="month">Oct</text>
+              <text x="13" y="-10" className="graph-text">Nov</text>
+              <text x="61" y="-10" className="graph-text">Dec</text>
+              <text x="109" y="-10" className="graph-text">Jan</text>
+              <text x="169" y="-10" className="graph-text">Feb</text>
+              <text x="217" y="-10" className="graph-text">Mar</text>
+              <text x="265" y="-10" className="graph-text">Apr</text>
+              <text x="325" y="-10" className="graph-text">May</text>
+              <text x="373" y="-10" className="graph-text">Jun</text>
+              <text x="421" y="-10" className="graph-text">Jul</text>
+              <text x="481" y="-10" className="graph-text">Aug</text>
+              <text x="529" y="-10" className="graph-text">Sep</text>
+              <text x="577" y="-10" className="graph-text">Oct</text>
 
 
-
-
-
-              <text text-anchor="start" class="wday" dx="-14" dy="8" style={{ display:"none" }}>Sun</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="20">Mon</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="32" style={{ display:"none" }}>Tue</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="44">Wed</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="57" style={{ display:"none" }}>Thu</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="69">Fri</text>
-              <text text-anchor="start" class="wday" dx="-14" dy="81" style={{ display:"none" }}>Sat</text>
+              <text className="graph-text" dx="-14" dy="8" style={{ display:"none" }}>Sun</text>
+              <text className="graph-text" dx="-14" dy="20">Mon</text>
+              <text className="graph-text" dx="-14" dy="32" style={{ display:"none" }}>Tue</text>
+              <text className="graph-text" dx="-14" dy="44">Wed</text>
+              <text className="graph-text" dx="-14" dy="57" style={{ display:"none" }}>Thu</text>
+              <text className="graph-text" dx="-14" dy="69">Fri</text>
+              <text className="graph-text" dx="-14" dy="81" style={{ display:"none" }}>Sat</text>
 
             </g>
           </svg>
-
-
-
-
-
-          <div className="graph-footer">
-
-            <div className="legend-container">
-              Less
-              <ul className="legend">
-                <li style={{backgroundColor: '#eee'}}></li>
-                <li style={{backgroundColor: '#c6e48b'}}></li>
-                <li style={{backgroundColor: '#7bc96f'}}></li>
-                <li style={{backgroundColor: '#239a3b'}}></li>
-                <li style={{backgroundColor: '#196127'}}></li>
-              </ul>
-              More
-            </div>
-
-
-
-          </div>
-
-
-
-
+          <GraphLegend />
         </div>
-
-
-
-
-
-
-
-
-
-
 
 
 

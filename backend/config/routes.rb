@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   post 'authenticate', to: 'authentication#authenticate'
 
+  resources :practice_sessions, only: [:index]
 
-  resources :items
 end
