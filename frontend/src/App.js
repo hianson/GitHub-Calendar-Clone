@@ -41,12 +41,9 @@ login() {
     password: 'password'
   })
   .then(function(response) {
-    var updateState = {
-      user: self.state.user
-    }
-    // set updateState hash to have changed authToken
+    var updateState = self.state
+
     updateState['user']['authToken'] = response.data.auth_token
-    // var thing = "updateState['user']['authToken']"
     self.setState(updateState, ()=> self.getPracticeSessions())
   })
   .catch(function(error) {
@@ -55,15 +52,6 @@ login() {
 }
 
 logout() {
-  var updateState = this.state
-
-  updateState['user']['authToken'] = null
-  // this.setState(updateState, ()=>console.log('logged out:', this.state))
-  this.resetUserState()
-  // console.log(this.state)
-}
-
-resetUserState() {
   var updateState = this.state
 
   updateState['user']['authToken'] = null
@@ -78,14 +66,10 @@ getPracticeSessions() {
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
   .then(function(response) {
-    // console.log(response.data[0]);
-    console.log(self.state)
-    // var state = {
-    //   self.state
-    // }
+    var updateState = self.state
 
-    // state['practiceSessions'] = response.data
-    // self.setState(state, ()=>console.log(self.state))
+    updateState['user']['practiceSessions'] = response.data
+    self.setState(updateState, ()=>console.log(self.state))
   })
   .catch(function(error) {
     console.log(error);
