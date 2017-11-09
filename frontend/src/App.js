@@ -8,9 +8,9 @@ class App extends Component {
   super(props);
   this.state = {
     user: {
-      authToken: null
-      },
-    practiceSessions: []
+      authToken: null,
+      practiceSessions: []
+      }
     };
   }
 
@@ -41,10 +41,13 @@ login() {
     password: 'password'
   })
   .then(function(response) {
-    var user = {}
-
-    user['authToken'] = response.data.auth_token;
-    self.setState({user}, ()=>self.getPracticeSessions())
+    var updateState = {
+      user: self.state.user
+    }
+    // set updateState hash to have changed authToken
+    updateState['user']['authToken'] = response.data.auth_token
+    // var thing = "updateState['user']['authToken']"
+    self.setState(updateState, ()=> self.getPracticeSessions())
   })
   .catch(function(error) {
     console.log(error);
@@ -52,9 +55,20 @@ login() {
 }
 
 logout() {
-  var user = {}
-  user['authToken'] = null
-  this.setState({user}, ()=>console.log('logged out:', this.state.user.authToken))
+  var updateState = this.state
+
+  updateState['user']['authToken'] = null
+  // this.setState(updateState, ()=>console.log('logged out:', this.state))
+  this.resetUserState()
+  // console.log(this.state)
+}
+
+resetUserState() {
+  var updateState = this.state
+
+  updateState['user']['authToken'] = null
+  updateState['user']['practiceSessions'] = []
+  this.setState(updateState, ()=> console.log(this.state))
 }
 
 getPracticeSessions() {
@@ -64,25 +78,32 @@ getPracticeSessions() {
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
   .then(function(response) {
-    var updateState = {}
-    console.log(response.data[0]);
-    self.setState({ practiceSessions: response.data }, ()=>console.log(self.state))
+    // console.log(response.data[0]);
+    console.log(self.state)
+    // var state = {
+    //   self.state
+    // }
+
+    // state['practiceSessions'] = response.data
+    // self.setState(state, ()=>console.log(self.state))
   })
   .catch(function(error) {
     console.log(error);
   });
 }
 
+tester() {
+  console.log('tester')
+}
+
   render() {
     return (
       <div className="container">
-
-
-      { this.renderSessionButtons() }
+        { this.renderSessionButtons() }
 
 
 
-        <h2 className="graph-header">contributions in the last year</h2>
+        <h2 className="graph-header"> contributions in the last year</h2>
         <div className="graph-container">
           <svg
               width="676"
@@ -105,6 +126,7 @@ getPracticeSessions() {
                 <use x="13" y="72" xlinkHref="#day" />
               </g>
               <g transform="translate(13, 0)">
+                <use onClick={this.tester} x="13" y="0" xlinkHref="#day" />
               </g>
               <g transform="translate(26, 0)">
               </g>
