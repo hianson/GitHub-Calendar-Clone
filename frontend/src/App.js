@@ -8,9 +8,9 @@ class App extends Component {
   super(props);
   this.state = {
     user: {
-      authToken: null
-      },
-    practiceSessions: []
+      authToken: null,
+      practiceSessions: []
+      }
     };
   }
 
@@ -41,10 +41,10 @@ login() {
     password: 'password'
   })
   .then(function(response) {
-    var user = {}
+    var updateState = self.state
 
-    user['authToken'] = response.data.auth_token;
-    self.setState({user}, ()=>self.getPracticeSessions())
+    updateState['user']['authToken'] = response.data.auth_token
+    self.setState(updateState, ()=> self.getPracticeSessions())
   })
   .catch(function(error) {
     console.log(error);
@@ -52,9 +52,11 @@ login() {
 }
 
 logout() {
-  var user = {}
-  user['authToken'] = null
-  this.setState({user}, ()=>console.log('logged out:', this.state.user.authToken))
+  var updateState = this.state
+
+  updateState['user']['authToken'] = null
+  updateState['user']['practiceSessions'] = []
+  this.setState(updateState, ()=> console.log(this.state))
 }
 
 getPracticeSessions() {
@@ -64,25 +66,28 @@ getPracticeSessions() {
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
   .then(function(response) {
-    var updateState = {}
-    console.log(response.data[0]);
-    self.setState({ practiceSessions: response.data }, ()=>console.log(self.state))
+    var updateState = self.state
+
+    updateState['user']['practiceSessions'] = response.data
+    self.setState(updateState, ()=>console.log(self.state))
   })
   .catch(function(error) {
     console.log(error);
   });
 }
 
+tester() {
+  console.log('tester')
+}
+
   render() {
     return (
       <div className="container">
-
-
-      { this.renderSessionButtons() }
+        { this.renderSessionButtons() }
 
 
 
-        <h2 className="graph-header">contributions in the last year</h2>
+        <h2 className="graph-header"> contributions in the last year</h2>
         <div className="graph-container">
           <svg
               width="676"
@@ -105,6 +110,7 @@ getPracticeSessions() {
                 <use x="13" y="72" xlinkHref="#day" />
               </g>
               <g transform="translate(13, 0)">
+                <use onClick={this.tester} x="13" y="0" xlinkHref="#day" />
               </g>
               <g transform="translate(26, 0)">
               </g>
