@@ -56,12 +56,11 @@ logout() {
 
   updateState['user']['authToken'] = null
   updateState['user']['practiceSessions'] = []
-  this.setState(updateState, ()=> console.log(this.state))
+  this.setState(updateState)
 }
 
 getPracticeSessions() {
   var self = this;
-  console.log('getting practice session data...')
 
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
@@ -69,7 +68,7 @@ getPracticeSessions() {
     var updateState = self.state
 
     updateState['user']['practiceSessions'] = response.data
-    self.setState(updateState, ()=>console.log(self.state))
+    self.setState(updateState)
   })
   .catch(function(error) {
     console.log(error);
@@ -96,48 +95,39 @@ renderGraphData() {
     weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
   }
 
-  let remainingDays = []
+  let daysRemaining = []
   for (let i = 0; i < daysLeftToRender; i++) {
-    var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
-    remainingDays.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+    displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+    startCell.setDate(startCell.getDate() + 1)
   }
-  weeks.push(<g transform="translate(676, 0)">{remainingDays}</g>)
+  weeks.push(<g transform="translate(676, 0)">{daysRemaining}</g>)
+  // console.log(weeks[0].props.children[0].props['data-date'])
+  if (this.state.user.practiceSessions[0]) {
+    console.log('printing practiceSessions:', this.state.user.practiceSessions[0])
+  }
 return (weeks)
+// console.log(weeks)
+// const updateState = this.state
+// updateState['user']['practiceSessions'] = weeks
+// this.setState(updateState)
 }
 
   render() {
     return (
       <div className="container">
         { this.renderSessionButtons() }
-
-
-
-        <h2 className="graph-header"> contributions in the last year</h2>
+        <h2 className="graph-header">{this.state.user.practiceSessions.count} contributions in the last year</h2>
         <div className="graph-container">
-          <svg
-              width="676"
-              height="104"
-          >
+          <svg width="676" height="104">
             <defs>
                 <g id="day">
                     <rect width="10" height="10" fill="#ebedf0" />
                 </g>
             </defs>
-
-
-
-
             <g transform="translate(16, 20)">
 
-
             { this.renderGraphData() }
-
-
-
-
-
-
-
 
               <text x="13" y="-10" className="graph-text">Nov</text>
               <text x="61" y="-10" className="graph-text">Dec</text>
