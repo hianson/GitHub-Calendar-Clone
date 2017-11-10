@@ -93,10 +93,10 @@ setGraphDataState() {
     for (let j = 0; j < daysPerWeek; j++) {
       var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
 
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" fill="#ebedf0" data-count="0" data-date={`${displayDate}`}/>)
+      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill="#ebedf0" data-count="0" data-date={`${displayDate}`}/>)
       startCell.setDate(startCell.getDate() + 1)
     }
-    weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
+    weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
   }
 
   let daysRemaining = []
@@ -104,10 +104,10 @@ setGraphDataState() {
     displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
     var displayDataCount = 0;
 
-    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" fill="#ebedf0" data-count={`${displayDataCount}`} data-date={`${displayDate}`}/>)
+    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" key={`${displayDate}`} fill="#ebedf0" data-count={`${displayDataCount}`} data-date={`${displayDate}`}/>)
     startCell.setDate(startCell.getDate() + 1)
   }
-  weeks.push(<g transform="translate(676, 0)">{daysRemaining}</g>)
+  weeks.push(<g transform="translate(676, 0)" key={52}>{daysRemaining}</g>)
 this.setState({ graphCells: weeks })
 }
 
