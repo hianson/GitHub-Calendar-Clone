@@ -9,8 +9,9 @@ class App extends Component {
   this.state = {
     user: {
       authToken: null,
-      practiceSessions: []
-      }
+      practiceSessions: null
+    },
+    graphCells: null
     };
   }
 
@@ -55,7 +56,7 @@ logout() {
   var updateState = this.state
 
   updateState['user']['authToken'] = null
-  updateState['user']['practiceSessions'] = []
+  updateState['user']['practiceSessions'] = null
   this.setState(updateState)
 }
 
@@ -78,51 +79,55 @@ getPracticeSessions() {
 renderGraphData() {
   var weeksPerYear = 52;
   var daysPerWeek = 7;
-  var startCell = new Date()
-  var daysLeftToRender = startCell.getDay() + 1
+  var startCell = new Date();
+  // var practiceSessions = this.state.user.practiceSessions;
+  // var practiceSessionsArr = [];
 
   startCell.setYear(startCell.getFullYear() - 1)
   startCell.setDate(startCell.getDate() - startCell.getDay())
+
+  // if (practiceSessions) {
+  //   for (let i = 0; i < practiceSessions.length; i++) {
+  //     var sessionDate = new Date(practiceSessions[i].start_time)
+  //     var displaySessionDate = sessionDate.getFullYear() + "-" + (sessionDate.getMonth() + 1) + "-" + sessionDate.getDate()
+  //     practiceSessionsArr.push(displaySessionDate)
+  //   }
+  // }
 
   let weeks = []
   for (let i = 0; i < weeksPerYear; i++) {
     let days = []
     for (let j = 0; j < daysPerWeek; j++) {
       var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+
+      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" fill="#ebedf0" data-count="0" data-date={`${displayDate}`}/>)
       startCell.setDate(startCell.getDate() + 1)
     }
     weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
   }
 
   let daysRemaining = []
-  for (let i = 0; i < daysLeftToRender; i++) {
+  for (let i = 0; i < new Date().getDay() + 1; i++) {
     displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
-    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+    var displayDataCount = 0;
+
+    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" fill="#ebedf0" data-count={`${displayDataCount}`} data-date={`${displayDate}`}/>)
     startCell.setDate(startCell.getDate() + 1)
   }
   weeks.push(<g transform="translate(676, 0)">{daysRemaining}</g>)
-  // console.log(weeks[0].props.children[0].props['data-date'])
-  if (this.state.user.practiceSessions[0]) {
-    console.log('printing practiceSessions:', this.state.user.practiceSessions[0])
-  }
 return (weeks)
-// console.log(weeks)
-// const updateState = this.state
-// updateState['user']['practiceSessions'] = weeks
-// this.setState(updateState)
 }
 
   render() {
     return (
       <div className="container">
         { this.renderSessionButtons() }
-        <h2 className="graph-header">{this.state.user.practiceSessions.count} contributions in the last year</h2>
+        <h2 className="graph-header">contributions in the last year</h2>
         <div className="graph-container">
           <svg width="676" height="104">
             <defs>
                 <g id="day">
-                    <rect width="10" height="10" fill="#ebedf0" />
+                    <rect width="10" height="10" />
                 </g>
             </defs>
             <g transform="translate(16, 20)">
