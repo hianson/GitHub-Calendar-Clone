@@ -76,23 +76,16 @@ getPracticeSessions() {
   });
 }
 
-renderGraphData() {
+componentWillMount() {
+  this.setGraphDataState()
+}
+
+setGraphDataState() {
   var weeksPerYear = 52;
   var daysPerWeek = 7;
   var startCell = new Date();
-  // var practiceSessions = this.state.user.practiceSessions;
-  // var practiceSessionsArr = [];
-
   startCell.setYear(startCell.getFullYear() - 1)
   startCell.setDate(startCell.getDate() - startCell.getDay())
-
-  // if (practiceSessions) {
-  //   for (let i = 0; i < practiceSessions.length; i++) {
-  //     var sessionDate = new Date(practiceSessions[i].start_time)
-  //     var displaySessionDate = sessionDate.getFullYear() + "-" + (sessionDate.getMonth() + 1) + "-" + sessionDate.getDate()
-  //     practiceSessionsArr.push(displaySessionDate)
-  //   }
-  // }
 
   let weeks = []
   for (let i = 0; i < weeksPerYear; i++) {
@@ -115,7 +108,7 @@ renderGraphData() {
     startCell.setDate(startCell.getDate() + 1)
   }
   weeks.push(<g transform="translate(676, 0)">{daysRemaining}</g>)
-return (weeks)
+this.setState({ graphCells: weeks })
 }
 
   render() {
@@ -132,7 +125,14 @@ return (weeks)
             </defs>
             <g transform="translate(16, 20)">
 
-            { this.renderGraphData() }
+
+            {this.state.graphCells.map((cellData, index) => {
+              return(cellData)
+            })}
+
+
+
+
 
               <text x="13" y="-10" className="graph-text">Nov</text>
               <text x="61" y="-10" className="graph-text">Dec</text>
