@@ -108,6 +108,16 @@ setGraphDataState() {
         }
       }
 
+      if (dataCount > 0 && dataCount <= 1) {
+        displayFill = "#c6e48b"
+      } else if (dataCount > 1 && dataCount <= 2) {
+        displayFill = "#7bc96f"
+      } else if (dataCount > 2 && dataCount <= 3) {
+        displayFill = "#239a3b"
+      } else if (dataCount > 4) {
+        displayFill = "#196127"
+      }
+
       days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill={`${displayFill}`} data-count={`${dataCount}`} data-date={`${displayDate}`}/>)
       startCell.setDate(startCell.getDate() + 1)
     }
