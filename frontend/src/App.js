@@ -69,7 +69,8 @@ getPracticeSessions() {
     var updateState = self.state
 
     updateState['user']['practiceSessions'] = response.data
-    self.setState(updateState)
+    // console.log(self.state)
+    self.setState(updateState, ()=> self.setGraphDataState())
   })
   .catch(function(error) {
     console.log(error);
@@ -92,8 +93,22 @@ setGraphDataState() {
     let days = []
     for (let j = 0; j < daysPerWeek; j++) {
       var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+      var displayFill = "#ebedf0"
+      var dataCount = 0
 
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill="#ebedf0" data-count="0" data-date={`${displayDate}`}/>)
+      if (this.state.user.practiceSessions) {
+        var practiceSessions = this.state.user.practiceSessions
+
+        for (var k = 0; k < practiceSessions.length; k++) {
+          var startTime = new Date(practiceSessions[k].start_time)
+          var convertedTime = startTime.getFullYear() + "-" + (startTime.getMonth() + 1) + "-" + startTime.getDate();
+          if (convertedTime === displayDate) {
+            dataCount += 1
+          }
+        }
+      }
+
+      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill={`${displayFill}`} data-count={`${dataCount}`} data-date={`${displayDate}`}/>)
       startCell.setDate(startCell.getDate() + 1)
     }
     weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
