@@ -80,12 +80,12 @@ renderGraphData() {
   var weeksPerYear = 52;
   var daysPerWeek = 7;
   var startCell = new Date()
+  var daysLeftToRender = startCell.getDay() + 1
 
   startCell.setYear(startCell.getFullYear() - 1)
   startCell.setDate(startCell.getDate() - startCell.getDay())
 
   let weeks = []
-  console.log('loops starting here')
   for (let i = 0; i < weeksPerYear; i++) {
     let days = []
     for (let j = 0; j < daysPerWeek; j++) {
@@ -96,8 +96,13 @@ renderGraphData() {
     weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
   }
 
+  let remainingDays = []
+  for (let i = 0; i < daysLeftToRender; i++) {
+    var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+    remainingDays.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+  }
+  weeks.push(<g transform="translate(676, 0)">{remainingDays}</g>)
 return (weeks)
-
 }
 
   render() {
@@ -128,14 +133,6 @@ return (weeks)
             { this.renderGraphData() }
 
 
-
-
-
-
-              <g transform="translate(676, 0)">
-                  <rect width="10" height="10" x="-39" y="0" fill="#c6e48b" data-count="1" data-date="2017-11-05"/>
-                  <rect width="10" height="10" x="-39" y="12" fill="#196127" data-count="12" data-date="2017-11-06"/>
-              </g>
 
 
 
