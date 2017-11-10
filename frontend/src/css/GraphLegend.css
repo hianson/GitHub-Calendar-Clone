@@ -1,5 +1,6 @@
 .graph-footer {
   margin: inherit;
+  margin-top: 4px;
   /*border: 1px orange solid;*/
   font-size: 11px;
   color: #586069;

@@ -76,22 +76,23 @@ getPracticeSessions() {
   });
 }
 
-tester() {
-  console.log('tester')
-}
-
-
 renderGraphData() {
   var weeksPerYear = 52;
   var daysPerWeek = 7;
-  let weeks = []
+  var startCell = new Date()
 
+  startCell.setYear(startCell.getFullYear() - 1)
+  startCell.setDate(startCell.getDate() - startCell.getDay())
+
+  let weeks = []
+  console.log('loops starting here')
   for (let i = 0; i < weeksPerYear; i++) {
     let days = []
     for (let j = 0; j < daysPerWeek; j++) {
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" />)
+      var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" data-count="0" data-date={`${displayDate}`}/>)
+      startCell.setDate(startCell.getDate() + 1)
     }
-    console.log(days)
     weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
   }
 
