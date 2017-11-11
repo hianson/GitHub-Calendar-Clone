@@ -58,6 +58,7 @@ logout() {
   updateState['user']['authToken'] = null
   updateState['user']['practiceSessions'] = null
   this.setState(updateState)
+  this.setGraphDataState()
 }
 
 getPracticeSessions() {
