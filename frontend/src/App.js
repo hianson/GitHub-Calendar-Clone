@@ -82,26 +82,31 @@ componentWillMount() {
 }
 
 setGraphDataState() {
-  var weeksPerYear = 52;
+  var weeksPerYear = 53;
   var daysPerWeek = 7;
   var startCell = new Date();
+  var leftoverRender = startCell.getDay() + 1
+  var practiceSessions = this.state.user.practiceSessions;
   startCell.setYear(startCell.getFullYear() - 1)
   startCell.setDate(startCell.getDate() - startCell.getDay())
 
   let weeks = []
   for (let i = 0; i < weeksPerYear; i++) {
     let days = []
+
+    if (i === 52) {
+      daysPerWeek = leftoverRender
+    }
     for (let j = 0; j < daysPerWeek; j++) {
       var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
       var displayFill = "#ebedf0"
       var dataCount = 0
 
-      if (this.state.user.practiceSessions) {
-        var practiceSessions = this.state.user.practiceSessions
-
+      if (practiceSessions) {
         for (var k = 0; k < practiceSessions.length; k++) {
           var startTime = new Date(practiceSessions[k].start_time)
           var convertedTime = startTime.getFullYear() + "-" + (startTime.getMonth() + 1) + "-" + startTime.getDate();
+
           if (convertedTime === displayDate) {
             dataCount += 1
           }
@@ -123,16 +128,7 @@ setGraphDataState() {
     }
     weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
   }
-
-  let daysRemaining = []
-  for (let i = 0; i < new Date().getDay() + 1; i++) {
-    displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
-    var displayDataCount = 0;
-
-    daysRemaining.push(<use x="-39" y={`${i * 12}`} xlinkHref="#day" key={`${displayDate}`} fill="#ebedf0" data-count={`${displayDataCount}`} data-date={`${displayDate}`}/>)
-    startCell.setDate(startCell.getDate() + 1)
-  }
-  weeks.push(<g transform="translate(676, 0)" key={52}>{daysRemaining}</g>)
+  
 this.setState({ graphCells: weeks })
 }
 
