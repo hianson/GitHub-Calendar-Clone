@@ -9,8 +9,9 @@ class App extends Component {
   this.state = {
     user: {
       authToken: null,
-      practiceSessions: []
-      }
+      practiceSessions: null
+    },
+    graphCells: null
     };
   }
 
@@ -26,7 +27,7 @@ renderSessionButtons() {
     return(
     <div className="boton-container">
       <button className="boton" onClick={() => this.login()}>
-        Login
+        Login as Guest
       </button>
     </div>)
   }
@@ -37,7 +38,7 @@ login() {
   // authenticate via backend and receive JWT token
   // make GET request for PSessions using token
   axios.post('http://localhost:3001/authenticate', {
-    email: 'anson@anson',
+    email: 'guest@guest',
     password: 'password'
   })
   .then(function(response) {
@@ -55,13 +56,13 @@ logout() {
   var updateState = this.state
 
   updateState['user']['authToken'] = null
-  updateState['user']['practiceSessions'] = []
-  this.setState(updateState, ()=> console.log(this.state))
+  updateState['user']['practiceSessions'] = null
+  this.setState(updateState)
+  this.setGraphDataState()
 }
 
 getPracticeSessions() {
   var self = this;
-  console.log('getting practice session data...')
 
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
@@ -69,73 +70,98 @@ getPracticeSessions() {
     var updateState = self.state
 
     updateState['user']['practiceSessions'] = response.data
-    self.setState(updateState, ()=>console.log(self.state))
+    // console.log(self.state)
+    self.setState(updateState, ()=> self.setGraphDataState())
   })
   .catch(function(error) {
     console.log(error);
   });
 }
 
-tester() {
-  console.log('tester')
+componentWillMount() {
+  this.setGraphDataState()
 }
 
-
-renderGraphData() {
-  var weeksPerYear = 52;
+setGraphDataState() {
+  var weeksPerYear = 53;
   var daysPerWeek = 7;
-  let weeks = []
+  var startCell = new Date();
+  var leftoverRender = startCell.getDay() + 1
+  var practiceSessions = this.state.user.practiceSessions;
+  startCell.setYear(startCell.getFullYear() - 1)
+  startCell.setDate(startCell.getDate() - startCell.getDay())
 
+  let weeks = []
   for (let i = 0; i < weeksPerYear; i++) {
     let days = []
-    for (let j = 0; j < daysPerWeek; j++) {
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" />)
+
+    if (i === 52) {
+      daysPerWeek = leftoverRender
     }
-    console.log(days)
-    weeks.push(<g transform={`translate(${i * 13}, 0)`}>{days}</g>)
+    for (let j = 0; j < daysPerWeek; j++) {
+      var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+      var displayFill = "#ebedf0"
+      var dataCount = 0
+
+      if (practiceSessions) {
+        for (var k = 0; k < practiceSessions.length; k++) {
+          var startTime = new Date(practiceSessions[k].start_time)
+          var convertedTime = startTime.getFullYear() + "-" + (startTime.getMonth() + 1) + "-" + startTime.getDate();
+
+          if (convertedTime === displayDate) {
+            dataCount += 1
+          }
+        }
+      }
+
+      if (dataCount > 0 && dataCount <= 1) {
+        displayFill = "#c6e48b"
+      } else if (dataCount > 1 && dataCount <= 2) {
+        displayFill = "#7bc96f"
+      } else if (dataCount > 2 && dataCount <= 3) {
+        displayFill = "#239a3b"
+      } else if (dataCount > 4) {
+        displayFill = "#196127"
+      }
+
+      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill={`${displayFill}`} data-count={`${dataCount}`} data-date={`${displayDate}`}/>)
+      startCell.setDate(startCell.getDate() + 1)
+    }
+    weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
   }
 
-return (weeks)
+this.setState({ graphCells: weeks })
+}
 
+renderGraphHeader() {
+  if (this.state.user.practiceSessions) {
+    if (this.state.user.practiceSessions.length === 1) {
+      return(<h2 className="graph-header">1 contribution in the last year</h2>)
+    }
+    return(<h2 className="graph-header">{this.state.user.practiceSessions.length} contributions in the last year</h2>)
+  }
+  return(<h2 className="graph-header">0 contributions in the last year</h2>)
 }
 
   render() {
     return (
       <div className="container">
         { this.renderSessionButtons() }
+        { this.renderGraphHeader() }
 
-
-
-        <h2 className="graph-header"> contributions in the last year</h2>
         <div className="graph-container">
-          <svg
-              width="676"
-              height="104"
-          >
+          <svg width="676" height="104">
             <defs>
                 <g id="day">
-                    <rect width="10" height="10" fill="#ebedf0" />
+                    <rect width="10" height="10" />
                 </g>
             </defs>
-
-
-
-
             <g transform="translate(16, 20)">
 
 
-            { this.renderGraphData() }
-
-
-
-
-
-
-              <g transform="translate(676, 0)">
-                  <rect width="10" height="10" x="-39" y="0" fill="#c6e48b" data-count="1" data-date="2017-11-05"/>
-                  <rect width="10" height="10" x="-39" y="12" fill="#196127" data-count="12" data-date="2017-11-06"/>
-              </g>
-
+            {this.state.graphCells.map((cellData, index) => {
+              return(cellData)
+            })}
 
 
 
