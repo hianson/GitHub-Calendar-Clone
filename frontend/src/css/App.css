@@ -13,7 +13,7 @@ body {
   margin: auto;
   width: 800px;
   height: 700px;
-  border: 1px solid steelblue;
+  /*border: 1px solid steelblue;*/
 }
 
 .graph-container {

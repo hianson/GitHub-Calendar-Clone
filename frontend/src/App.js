@@ -27,7 +27,7 @@ renderSessionButtons() {
     return(
     <div className="boton-container">
       <button className="boton" onClick={() => this.login()}>
-        Login
+        Login as Guest
       </button>
     </div>)
   }
@@ -38,7 +38,7 @@ login() {
   // authenticate via backend and receive JWT token
   // make GET request for PSessions using token
   axios.post('http://localhost:3001/authenticate', {
-    email: 'anson@anson',
+    email: 'guest@guest',
     password: 'password'
   })
   .then(function(response) {
@@ -128,15 +128,26 @@ setGraphDataState() {
     }
     weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
   }
-  
+
 this.setState({ graphCells: weeks })
+}
+
+renderGraphHeader() {
+  if (this.state.user.practiceSessions) {
+    if (this.state.user.practiceSessions.length === 1) {
+      return(<h2 className="graph-header">1 contribution in the last year</h2>)
+    }
+    return(<h2 className="graph-header">{this.state.user.practiceSessions.length} contributions in the last year</h2>)
+  }
+  return(<h2 className="graph-header">0 contributions in the last year</h2>)
 }
 
   render() {
     return (
       <div className="container">
         { this.renderSessionButtons() }
-        <h2 className="graph-header">contributions in the last year</h2>
+        { this.renderGraphHeader() }
+
         <div className="graph-container">
           <svg width="676" height="104">
             <defs>
