@@ -11,8 +11,12 @@ class App extends Component {
       authToken: null,
       practiceSessions: null
     },
-    graphCells: null
+    graphCells: null,
+    hoveringCell: false,
+    tooltipTop: 0,
+    tooltipLeft: 0
     };
+    this.handleMouseHover = this.handleMouseHover.bind(this);
   }
 
 renderSessionButtons() {
@@ -70,7 +74,6 @@ getPracticeSessions() {
     var updateState = self.state
 
     updateState['user']['practiceSessions'] = response.data
-    // console.log(self.state)
     self.setState(updateState, ()=> self.setGraphDataState())
   })
   .catch(function(error) {
@@ -124,13 +127,33 @@ setGraphDataState() {
         displayFill = "#196127"
       }
 
-      days.push(<use x={`${13 - i}`} y={`${j * 12}`} xlinkHref="#day" key={`${displayDate}`} fill={`${displayFill}`} data-count={`${dataCount}`} data-date={`${displayDate}`}/>)
+      days.push(<use
+        className="day"
+        x={`${13 - i}`}
+        y={`${j * 12}`}
+        xlinkHref="#day"
+        key={`${displayDate}`}
+        fill={`${displayFill}`}
+        data-count={`${dataCount}`}
+        data-date={`${displayDate}`}
+        onMouseEnter={this.handleMouseHover}
+        onMouseLeave={this.handleMouseHover}
+        />
+      )
       startCell.setDate(startCell.getDate() + 1)
     }
     weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
   }
-
 this.setState({ graphCells: weeks })
+}
+
+handleMouseHover(e) {
+  var updateState = this.state
+
+  updateState['tooltipTop'] = e.target.attributes.x.value
+  updateState['tooltipLeft'] = e.target.attributes.y.value
+  updateState['hoveringCell'] = !this.state.hoveringCell
+  this.setState(updateState)
 }
 
 renderGraphHeader() {
@@ -140,10 +163,21 @@ renderGraphHeader() {
     }
     return(<h2 className="graph-header">{this.state.user.practiceSessions.length} contributions in the last year</h2>)
   }
-  return(<h2 className="graph-header">0 contributions in the last year</h2>)
+  return(<h2 className="graph-header">No contributions in the last year</h2>)
 }
 
   render() {
+
+
+    const svgtip = {
+      display: this.state.hoveringCell ? 'block' : 'none',
+      top: `${this.state.tooltipTop}px`,
+      left: `${this.state.tooltipLeft}px`
+    }
+
+
+
+
     return (
       <div className="container">
         { this.renderSessionButtons() }
@@ -158,14 +192,9 @@ renderGraphHeader() {
             </defs>
             <g transform="translate(16, 20)">
 
-
             {this.state.graphCells.map((cellData, index) => {
               return(cellData)
             })}
-
-
-
-
 
               <text x="13" y="-10" className="graph-text">Nov</text>
               <text x="61" y="-10" className="graph-text">Dec</text>
@@ -192,7 +221,29 @@ renderGraphHeader() {
             </g>
           </svg>
           <GraphLegend />
+
+
+
+          <div
+            onMouseEnter={this.handleMouseHover}
+            onMouseLeave={this.handleMouseHover}
+            style={svgtip} className="svgtip"
+
+            >
+              <strong>No contributions</strong> on Nov 6, 2016
+          </div>
+
+
+
+
+
+
         </div>
+
+
+
+
+
 
 
 
