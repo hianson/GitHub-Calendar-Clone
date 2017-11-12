@@ -14,7 +14,8 @@ class App extends Component {
     graphCells: null,
     hoveringCell: false,
     tooltipTop: 0,
-    tooltipLeft: 0
+    tooltipLeft: 0,
+    tooltipDate: ''
     };
     this.handleMouseHover = this.handleMouseHover.bind(this);
   }
@@ -149,9 +150,10 @@ this.setState({ graphCells: weeks })
 
 handleMouseHover(e) {
   var updateState = this.state
-
+  var tooltipDate = new Date(e.target.attributes['data-date'].value).toLocaleString("en-us", { month: "short", day:"numeric", year:"numeric" })
   updateState['tooltipTop'] = e.target.attributes.x.value
   updateState['tooltipLeft'] = e.target.attributes.y.value
+  updateState['tooltipDate'] = tooltipDate
   updateState['hoveringCell'] = !this.state.hoveringCell
   this.setState(updateState)
 }
@@ -173,8 +175,6 @@ renderGraphHeader() {
       display: this.state.hoveringCell ? 'block' : 'none',
       left: `${(-this.state.tooltipTop * 12) + 114.5}px`,
       top: `${this.state.tooltipLeft - 17}px`
-      // top: '0px',
-      // left: '0px'
     }
 
 
@@ -223,32 +223,10 @@ renderGraphHeader() {
             </g>
           </svg>
           <GraphLegend />
-
-
-
-          <div
-
-            style={svgtip} className="svgtip"
-
-            >
-              <strong>No contributions</strong> on Nov 6, 2016
+          <div style={svgtip} className="svgtip">
+              <strong>No contributions</strong> on {this.state.tooltipDate}
           </div>
-
-
-
-
-
-
         </div>
-
-
-
-
-
-
-
-
-
       </div>
     );
   }
