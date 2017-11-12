@@ -227,8 +227,7 @@ renderGraphHeader() {
 
 
           <div
-            onMouseEnter={this.handleMouseHover}
-            onMouseLeave={this.handleMouseHover}
+
             style={svgtip} className="svgtip"
 
             >
