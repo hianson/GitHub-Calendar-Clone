@@ -171,8 +171,10 @@ renderGraphHeader() {
 
     const svgtip = {
       display: this.state.hoveringCell ? 'block' : 'none',
-      top: `${this.state.tooltipTop}px`,
-      left: `${this.state.tooltipLeft}px`
+      left: `${(-this.state.tooltipTop * 12) + 114.5}px`,
+      top: `${this.state.tooltipLeft - 17}px`
+      // top: '0px',
+      // left: '0px'
     }
 
 

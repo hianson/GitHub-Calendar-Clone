@@ -42,6 +42,7 @@ body {
 }
 
 .svgtip {
+  /*transform: translateX(-50%);*/
   position: absolute;
   z-index: 99999;
   padding: 10px;
