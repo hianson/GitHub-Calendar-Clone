@@ -9,9 +9,15 @@ class App extends Component {
   this.state = {
     user: {
       authToken: null,
-      practiceSessions: []
-      }
+      practiceSessions: null
+    },
+    graphCells: null,
+    hoveringCell: false,
+    tooltipTop: 0,
+    tooltipLeft: 0,
+    tooltipDate: ''
     };
+    this.handleMouseHover = this.handleMouseHover.bind(this);
   }
 
 renderSessionButtons() {
@@ -26,7 +32,7 @@ renderSessionButtons() {
     return(
     <div className="boton-container">
       <button className="boton" onClick={() => this.login()}>
-        Login
+        Login as Guest
       </button>
     </div>)
   }
@@ -36,8 +42,8 @@ login() {
   var self = this;
   // authenticate via backend and receive JWT token
   // make GET request for PSessions using token
-  axios.post('http://localhost:3001/authenticate', {
-    email: 'anson@anson',
+  axios.post('http://localhost:3000/authenticate', {
+    email: 'guest@guest',
     password: 'password'
   })
   .then(function(response) {
@@ -55,13 +61,13 @@ logout() {
   var updateState = this.state
 
   updateState['user']['authToken'] = null
-  updateState['user']['practiceSessions'] = []
-  this.setState(updateState, ()=> console.log(this.state))
+  updateState['user']['practiceSessions'] = null
+  this.setState(updateState)
+  this.setGraphDataState()
 }
 
 getPracticeSessions() {
   var self = this;
-  console.log('getting practice session data...')
 
   axios.defaults.headers.common['Authorization'] = this.state.user.authToken;
   axios.get('http://localhost:3001/practice_sessions/')
@@ -69,153 +75,130 @@ getPracticeSessions() {
     var updateState = self.state
 
     updateState['user']['practiceSessions'] = response.data
-    self.setState(updateState, ()=>console.log(self.state))
+    self.setState(updateState, ()=> self.setGraphDataState())
   })
   .catch(function(error) {
     console.log(error);
   });
 }
 
-tester() {
-  console.log('tester')
+componentWillMount() {
+  this.setGraphDataState()
+}
+
+setGraphDataState() {
+  var weeksToRender = 54;
+  var daysPerWeek = 7;
+  var startCell = new Date();
+  var leftoverRender = startCell.getDay() + 1
+  var practiceSessions = this.state.user.practiceSessions;
+  startCell.setYear(startCell.getFullYear() - 1)
+  startCell.setDate(startCell.getDate() - startCell.getDay())
+
+  let weeks = []
+  for (let i = 0; i < weeksToRender; i++) {
+    let days = []
+
+    if (i === 53) {
+      daysPerWeek = leftoverRender
+    }
+    for (let j = 0; j < daysPerWeek; j++) {
+      var displayDate = startCell.getFullYear() + "-" + (startCell.getMonth() + 1) + "-" + startCell.getDate();
+      var displayFill = "#ebedf0"
+      var dataCount = 0
+
+      if (practiceSessions) {
+        for (var k = 0; k < practiceSessions.length; k++) {
+          var startTime = new Date(practiceSessions[k].start_time)
+          var convertedTime = startTime.getFullYear() + "-" + (startTime.getMonth() + 1) + "-" + startTime.getDate();
+
+          if (convertedTime === displayDate) {
+            dataCount += 1
+          }
+        }
+      }
+
+      if (dataCount > 0 && dataCount <= 1) {
+        displayFill = "#c6e48b"
+      } else if (dataCount > 1 && dataCount <= 2) {
+        displayFill = "#7bc96f"
+      } else if (dataCount > 2 && dataCount <= 3) {
+        displayFill = "#239a3b"
+      } else if (dataCount > 4) {
+        displayFill = "#196127"
+      }
+
+      days.push(<use
+        className="day"
+        x={`${13 - i}`}
+        y={`${j * 12}`}
+        xlinkHref="#day"
+        key={`${displayDate}`}
+        fill={`${displayFill}`}
+        data-count={`${dataCount}`}
+        data-date={`${displayDate}`}
+        onMouseEnter={this.handleMouseHover}
+        onMouseLeave={this.handleMouseHover}
+        />
+      )
+      startCell.setDate(startCell.getDate() + 1)
+    }
+    weeks.push(<g transform={`translate(${i * 13}, 0)`} key={`${i}`}>{days}</g>)
+  }
+this.setState({ graphCells: weeks })
+}
+
+handleMouseHover(e) {
+  var updateState = this.state
+  // var tooltipDate = new Date(e.target.attributes['data-date'].value).toLocaleString("en-us", { month: "short", day:"numeric", year:"numeric" })
+  var tooltipDate = e.target.attributes['data-date'].value
+  console.log(tooltipDate)
+  updateState['tooltipTop'] = e.target.attributes.x.value
+  updateState['tooltipLeft'] = e.target.attributes.y.value
+  updateState['tooltipDate'] = tooltipDate
+  updateState['hoveringCell'] = !this.state.hoveringCell
+  this.setState(updateState)
+}
+
+renderGraphHeader() {
+  if (this.state.user.practiceSessions) {
+    if (this.state.user.practiceSessions.length === 1) {
+      return(<h2 className="graph-header">1 contribution in the last year</h2>)
+    }
+    return(<h2 className="graph-header">{this.state.user.practiceSessions.length} contributions in the last year</h2>)
+  }
+  return(<h2 className="graph-header">No contributions in the last year</h2>)
 }
 
   render() {
+
+
+    const svgtip = {
+      display: this.state.hoveringCell ? 'block' : 'none',
+      left: `${(-this.state.tooltipTop * 12) + 114.5}px`,
+      top: `${this.state.tooltipLeft - 17}px`
+    }
+
+
+
+
     return (
       <div className="container">
         { this.renderSessionButtons() }
+        { this.renderGraphHeader() }
 
-
-
-        <h2 className="graph-header"> contributions in the last year</h2>
         <div className="graph-container">
-          <svg
-              width="676"
-              height="104"
-          >
+          <svg width="676" height="104">
             <defs>
                 <g id="day">
-                    <rect width="10" height="10" fill="#ebedf0" />
+                    <rect width="10" height="10" />
                 </g>
             </defs>
-
             <g transform="translate(16, 20)">
-              <g transform="translate(0, 0)">
-                <use x="13" y="0" xlinkHref="#day" />
-                <use x="13" y="12" xlinkHref="#day" />
-                <use x="13" y="24" xlinkHref="#day" />
-                <use x="13" y="36" xlinkHref="#day" />
-                <use x="13" y="48" xlinkHref="#day" />
-                <use x="13" y="60" xlinkHref="#day" />
-                <use x="13" y="72" xlinkHref="#day" />
-              </g>
-              <g transform="translate(13, 0)">
-                <use onClick={this.tester} x="13" y="0" xlinkHref="#day" />
-              </g>
-              <g transform="translate(26, 0)">
-              </g>
-              <g transform="translate(39, 0)">
-              </g>
-              <g transform="translate(52, 0)">
-              </g>
-              <g transform="translate(65, 0)">
-              </g>
-              <g transform="translate(78, 0)">
-              </g>
-              <g transform="translate(91, 0)">
-              </g>
-              <g transform="translate(104, 0)">
-              </g>
-              <g transform="translate(117, 0)">
-              </g>
-              <g transform="translate(130, 0)">
-              </g>
-              <g transform="translate(143, 0)">
-              </g>
-              <g transform="translate(156, 0)">
-              </g>
-              <g transform="translate(169, 0)">
-              </g>
-              <g transform="translate(182, 0)">
-              </g>
-              <g transform="translate(195, 0)">
-              </g>
-              <g transform="translate(208, 0)">
-              </g>
-              <g transform="translate(221, 0)">
-              </g>
-              <g transform="translate(234, 0)">
-              </g>
-              <g transform="translate(247, 0)">
-              </g>
-              <g transform="translate(260, 0)">
-              </g>
-              <g transform="translate(273, 0)">
-              </g>
-              <g transform="translate(286, 0)">
-              </g>
-              <g transform="translate(299, 0)">
-              </g>
-              <g transform="translate(312, 0)">
-              </g>
-              <g transform="translate(325, 0)">
-              </g>
-              <g transform="translate(338, 0)">
-              </g>
-              <g transform="translate(351, 0)">
-              </g>
-              <g transform="translate(364, 0)">
-              </g>
-              <g transform="translate(377, 0)">
-              </g>
-              <g transform="translate(390, 0)">
-              </g>
-              <g transform="translate(403, 0)">
-              </g>
-              <g transform="translate(416, 0)">
-              </g>
-              <g transform="translate(429, 0)">
-              </g>
-              <g transform="translate(442, 0)">
-              </g>
-              <g transform="translate(455, 0)">
-              </g>
-              <g transform="translate(468, 0)">
-              </g>
-              <g transform="translate(481, 0)">
-              </g>
-              <g transform="translate(494, 0)">
-              </g>
-              <g transform="translate(507, 0)">
-              </g>
-              <g transform="translate(520, 0)">
-              </g>
-              <g transform="translate(533, 0)">
-              </g>
-              <g transform="translate(546, 0)">
-              </g>
-              <g transform="translate(559, 0)">
-              </g>
-              <g transform="translate(572, 0)">
-              </g>
-              <g transform="translate(585, 0)">
-              </g>
-              <g transform="translate(598, 0)">
-              </g>
-              <g transform="translate(611, 0)">
-              </g>
-              <g transform="translate(624, 0)">
-              </g>
-              <g transform="translate(637, 0)">
-              </g>
-              <g transform="translate(650, 0)">
-              </g>
-              <g transform="translate(663, 0)">
-              </g>
-              <g transform="translate(676, 0)">
-                  <rect width="10" height="10" x="-39" y="0" fill="#c6e48b" data-count="1" data-date="2017-11-05"/>
-                  <rect width="10" height="10" x="-39" y="12" fill="#196127" data-count="12" data-date="2017-11-06"/>
-              </g>
+
+            {this.state.graphCells.map((cellData, index) => {
+              return(cellData)
+            })}
 
               <text x="13" y="-10" className="graph-text">Nov</text>
               <text x="61" y="-10" className="graph-text">Dec</text>
@@ -242,11 +225,10 @@ tester() {
             </g>
           </svg>
           <GraphLegend />
+          <div style={svgtip} className="svgtip">
+              <strong>No contributions</strong> on {this.state.tooltipDate}
+          </div>
         </div>
-
-
-
-
       </div>
     );
   }
