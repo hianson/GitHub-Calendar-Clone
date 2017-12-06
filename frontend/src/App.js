@@ -14,7 +14,8 @@ class App extends Component {
     graphCells: null,
     hoveringCell: false,
     tooltipTop: 0,
-    tooltipLeft: 0
+    tooltipLeft: 0,
+    tooltipDate: ''
     };
     this.handleMouseHover = this.handleMouseHover.bind(this);
   }
@@ -41,7 +42,7 @@ login() {
   var self = this;
   // authenticate via backend and receive JWT token
   // make GET request for PSessions using token
-  axios.post('http://localhost:3001/authenticate', {
+  axios.post('http://localhost:3000/authenticate', {
     email: 'guest@guest',
     password: 'password'
   })
@@ -86,7 +87,7 @@ componentWillMount() {
 }
 
 setGraphDataState() {
-  var weeksPerYear = 53;
+  var weeksToRender = 54;
   var daysPerWeek = 7;
   var startCell = new Date();
   var leftoverRender = startCell.getDay() + 1
@@ -95,10 +96,10 @@ setGraphDataState() {
   startCell.setDate(startCell.getDate() - startCell.getDay())
 
   let weeks = []
-  for (let i = 0; i < weeksPerYear; i++) {
+  for (let i = 0; i < weeksToRender; i++) {
     let days = []
 
-    if (i === 52) {
+    if (i === 53) {
       daysPerWeek = leftoverRender
     }
     for (let j = 0; j < daysPerWeek; j++) {
@@ -149,9 +150,12 @@ this.setState({ graphCells: weeks })
 
 handleMouseHover(e) {
   var updateState = this.state
-
+  // var tooltipDate = new Date(e.target.attributes['data-date'].value).toLocaleString("en-us", { month: "short", day:"numeric", year:"numeric" })
+  var tooltipDate = e.target.attributes['data-date'].value
+  console.log(tooltipDate)
   updateState['tooltipTop'] = e.target.attributes.x.value
   updateState['tooltipLeft'] = e.target.attributes.y.value
+  updateState['tooltipDate'] = tooltipDate
   updateState['hoveringCell'] = !this.state.hoveringCell
   this.setState(updateState)
 }
@@ -173,8 +177,6 @@ renderGraphHeader() {
       display: this.state.hoveringCell ? 'block' : 'none',
       left: `${(-this.state.tooltipTop * 12) + 114.5}px`,
       top: `${this.state.tooltipLeft - 17}px`
-      // top: '0px',
-      // left: '0px'
     }
 
 
@@ -223,32 +225,10 @@ renderGraphHeader() {
             </g>
           </svg>
           <GraphLegend />
-
-
-
-          <div
-
-            style={svgtip} className="svgtip"
-
-            >
-              <strong>No contributions</strong> on Nov 6, 2016
+          <div style={svgtip} className="svgtip">
+              <strong>No contributions</strong> on {this.state.tooltipDate}
           </div>
-
-
-
-
-
-
         </div>
-
-
-
-
-
-
-
-
-
       </div>
     );
   }
