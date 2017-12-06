@@ -42,7 +42,7 @@ login() {
   var self = this;
   // authenticate via backend and receive JWT token
   // make GET request for PSessions using token
-  axios.post('http://localhost:3001/authenticate', {
+  axios.post('http://localhost:3000/authenticate', {
     email: 'guest@guest',
     password: 'password'
   })
@@ -87,7 +87,7 @@ componentWillMount() {
 }
 
 setGraphDataState() {
-  var weeksPerYear = 53;
+  var weeksToRender = 54;
   var daysPerWeek = 7;
   var startCell = new Date();
   var leftoverRender = startCell.getDay() + 1
@@ -96,10 +96,10 @@ setGraphDataState() {
   startCell.setDate(startCell.getDate() - startCell.getDay())
 
   let weeks = []
-  for (let i = 0; i < weeksPerYear; i++) {
+  for (let i = 0; i < weeksToRender; i++) {
     let days = []
 
-    if (i === 52) {
+    if (i === 53) {
       daysPerWeek = leftoverRender
     }
     for (let j = 0; j < daysPerWeek; j++) {
@@ -150,7 +150,9 @@ this.setState({ graphCells: weeks })
 
 handleMouseHover(e) {
   var updateState = this.state
-  var tooltipDate = new Date(e.target.attributes['data-date'].value).toLocaleString("en-us", { month: "short", day:"numeric", year:"numeric" })
+  // var tooltipDate = new Date(e.target.attributes['data-date'].value).toLocaleString("en-us", { month: "short", day:"numeric", year:"numeric" })
+  var tooltipDate = e.target.attributes['data-date'].value
+  console.log(tooltipDate)
   updateState['tooltipTop'] = e.target.attributes.x.value
   updateState['tooltipLeft'] = e.target.attributes.y.value
   updateState['tooltipDate'] = tooltipDate
